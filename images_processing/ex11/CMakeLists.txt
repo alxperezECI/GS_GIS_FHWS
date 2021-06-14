@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.1)
+project( Example_11 )
+find_package( OpenCV REQUIRED )
+set (CMAKE_CXX_STANDARD 11)
+add_executable( example1 main_all.cpp )
+target_link_libraries( example1 ${OpenCV_LIBS} )
