@@ -13,7 +13,7 @@
 //#include <opencv2/stitching/stitcher.hpp>
 //#include <opencv2/features2d/features2d.hpp>
 //#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -100,13 +100,13 @@ int main (int argc, char** argv){
             //  As in other CUDA program, you should to ensure the data are uploaded
             //  to the GPU unit in order to be processed.
 
-            cv::gpu::GpuMat _gTempMatIn, _gTempMatOut;
+            cv::cuda::GpuMat _gTempMatIn, _gTempMatOut;
             _gTempMatIn.upload(_imgIn);
 
             double angle = std::stod( _parameter );
             cv::Mat M = cv::getRotationMatrix2D( cv::Point(_imgIn.cols/2,_imgIn.rows/2), angle, 1.0 );
 
-            cv::gpu::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size( _imgIn.cols,_imgIn.rows ) );
+            cv::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size( _imgIn.cols,_imgIn.rows ) );
 
 
             _gTempMatOut.download(_imgOut);             //  Once the GPU processing have finished, the data should be download

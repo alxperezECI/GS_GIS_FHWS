@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -69,7 +69,7 @@ int main (int argc, char** argv){
 
 
     if( _imgIn.channels() != 1 )            //  First, test if it's a gray image
-        cv::cvtColor(_imgIn, _imgIn, CV_BGRA2GRAY);
+        cv::cvtColor(_imgIn, _imgIn, cv::COLOR_RGBA2GRAY );
 
     if( _imgIn.type() != CV_8U )            //  This histogram program only works with
         _imgIn.convertTo( _imgIn, CV_8U );  //  0-255 images
@@ -108,14 +108,14 @@ int main (int argc, char** argv){
     }
 
     _imgOut = histImage.clone();
-    cv::namedWindow("Example", CV_NORMAL);
+    cv::namedWindow("Example", FP_NORMAL);
     cv::imshow("Example",_imgOut);
     cv::waitKey(0);
 
 
     //  The histogram could be used to equalize the image
     cv::equalizeHist( _imgIn, _imgOut );
-    cv::namedWindow("Equalized", CV_NORMAL);
+    cv::namedWindow("Equalized", FP_NORMAL);
     cv::imshow("Equalized",_imgOut);
     cv::waitKey(0);
 
@@ -125,14 +125,14 @@ int main (int argc, char** argv){
                       1, 1, 1);
     kernel = kernel / 9;
     cv::filter2D( _imgIn,_imgOut,_imgIn.depth(), kernel );
-    cv::namedWindow("Smoothing", CV_NORMAL);
+    cv::namedWindow("Smoothing", FP_NORMAL);
     cv::imshow("Smoothing",_imgOut);
     cv::waitKey(0);
 
     kernel = cv::Mat(7, 7, CV_32FC1, 1);;
     kernel = kernel / 49;
     cv::filter2D( _imgIn,_imgOut,_imgIn.depth(), kernel );
-    cv::namedWindow("Smoothing 2", CV_NORMAL);
+    cv::namedWindow("Smoothing 2", FP_NORMAL);
     cv::imshow("Smoothing 2",_imgOut);
     cv::waitKey(0);
 
@@ -142,7 +142,7 @@ int main (int argc, char** argv){
                           -1, -1, -1);
     kernel = kernel / 9;
     cv::filter2D( _imgIn,_imgOut,_imgIn.depth(), kernel );
-    cv::namedWindow("Sharpening", CV_NORMAL);
+    cv::namedWindow("Sharpening", FP_NORMAL);
     cv::imshow("Sharpening",_imgOut);
     cv::waitKey(0);
 
@@ -152,7 +152,7 @@ int main (int argc, char** argv){
 
     cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::namedWindow("Example", CV_NORMAL);
+    cv::namedWindow("Example", FP_NORMAL);
     cv::imshow("Example",_imgOut);
     cv::waitKey(0);
 

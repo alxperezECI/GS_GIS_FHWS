@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -69,7 +69,7 @@ int main (int argc, char** argv){
 
     cv::Mat _imgGrey;
     if( _imgIn.channels() != 1 )            //  First, test if it's a gray image
-        cv::cvtColor(_imgIn, _imgGrey, CV_BGRA2GRAY);
+        cv::cvtColor(_imgIn, _imgGrey, cv::COLOR_BGRA2GRAY);
 
     cv::namedWindow( "Gray", 1 );
     cv::imshow( "Gray", _imgGrey );
@@ -83,9 +83,9 @@ int main (int argc, char** argv){
     int largest_area=0;
     int largest_contour_index=0;
     cv::Rect bounding_rect;
-    std::vector<cv::vector<cv::Point>> contours; // Vector for storing contour
+    std::vector<std::vector<cv::Point>> contours; // Vector for storing contour
     std::vector<cv::Vec4i> hierarchy;
-    findContours( _imgGrey, contours, hierarchy,CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+    findContours( _imgGrey, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE );
     // iterate through each contour.
     for( int i = 0; i< contours.size(); i++ )
     {
@@ -103,7 +103,7 @@ int main (int argc, char** argv){
     cv::Scalar color(255,255,255);  // color of the contour in the
     //Draw the contour and rectangle
     _imgOut = _imgIn.clone();
-    cv::drawContours( _imgOut, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy);
+    cv::drawContours( _imgOut, contours, largest_contour_index, color, cv::FILLED, 8, hierarchy);
     cv::rectangle(_imgOut, bounding_rect, cv::Scalar(0,255,0), 2, 8,0);
 
 
@@ -113,7 +113,7 @@ int main (int argc, char** argv){
 
     cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::namedWindow("Example", CV_NORMAL);
+    cv::namedWindow("Example", FP_NORMAL);
     cv::imshow("Example",_imgOut);
     cv::waitKey(0);
 

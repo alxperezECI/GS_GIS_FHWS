@@ -9,10 +9,10 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/stitching/stitcher.hpp>
+#include <opencv2/stitching.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 int main (int argc, char** argv){
@@ -95,7 +95,7 @@ int main (int argc, char** argv){
 
 #ifdef  DEBUG
             std::cout << "Create the image: " << _imgOutPath << std::endl;
-            namedWindow("Example", CV_NORMAL);
+            namedWindow("Example", FP_NORMAL);
             imshow("Example",_imOut);
             waitKey(0);
 #endif

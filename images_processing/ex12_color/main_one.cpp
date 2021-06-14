@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -101,7 +101,7 @@ int main (int argc, char** argv){
 
     // Use the Hough transform to detect circles in the combined threshold image
     std::vector<cv::Vec3f> circles;
-    cv::HoughCircles(_hue_image, circles, CV_HOUGH_GRADIENT, 1, _hue_image.rows/8, 100, 20, 0, 0);
+    cv::HoughCircles(_hue_image, circles, cv::HOUGH_GRADIENT, 1, _hue_image.rows/8, 100, 20, 0, 0);
 
     // Loop over all detected circles and outline them on the original image
     _imgOut = _imgIn.clone();
@@ -124,7 +124,7 @@ int main (int argc, char** argv){
 
     cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::namedWindow("Example", CV_NORMAL);
+    cv::namedWindow("Example", FP_NORMAL);
     cv::imshow("Example",_imgOut);
     cv::waitKey(0);
 

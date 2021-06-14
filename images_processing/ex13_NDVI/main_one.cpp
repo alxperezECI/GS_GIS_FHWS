@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -62,7 +62,7 @@ int main (int argc, char** argv){
     std::cout <<"Looking for images in the folder: "<< _WorkingPath << std::endl;
     // Defining variables
 
-    cv::gpu::GpuMat _Nir, _Red, _Num, _Den, _NdviGpu;
+    cv::cuda::GpuMat _Nir, _Red, _Num, _Den, _NdviGpu;
     cv::Mat _Ndvi;
     std::vector<std::string> files;
 
@@ -125,14 +125,14 @@ int main (int argc, char** argv){
                 // Calculates the NDIV image from RED and NIR images.
 //                std::cout  << "adding\n";
 
-                cv::gpu::add(_Nir,_Red, _Den);
+                cv::add(_Nir,_Red, _Den);
 
 //                std::cout << "Substracting\n";
                 // Computing the sum
-                cv::gpu::subtract(_Nir, _Red, _Num);                                    // Computing the substract
+                cv::subtract(_Nir, _Red, _Num);                                    // Computing the substract
                 _Num.convertTo(_Num,CV_32FC1);
                 _Den.convertTo(_Den,CV_32FC1);
-                cv::gpu::divide(_Num, _Den, _NdviGpu,CV_32FC1);                         // Obtaining the NDVI image
+                cv::divide(_Num, _Den, _NdviGpu,CV_32FC1);                         // Obtaining the NDVI image
                 _NdviGpu.convertTo(_NdviGpu,CV_16UC1, 65536/3.f);                   // Convert NDVI image to integers. This method may be improved with equalization.
                 _NdviGpu.download(_Ndvi);
 #ifdef  DEBUG

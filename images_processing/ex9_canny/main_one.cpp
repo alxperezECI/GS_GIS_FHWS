@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -69,7 +69,7 @@ int main (int argc, char** argv){
 
 
     if( _imgIn.channels() != 1 )            //  First, test if it's a gray image
-        cv::cvtColor(_imgIn, _imgIn, CV_BGRA2GRAY);
+        cv::cvtColor(_imgIn, _imgIn, cv::COLOR_BGRA2GRAY);
 
     if( _imgIn.type() != CV_8U )            //  This histogram program only works with
         _imgIn.convertTo( _imgIn, CV_8U );  //  0-255 images
@@ -93,7 +93,7 @@ int main (int argc, char** argv){
     cv::convertScaleAbs(_diffY,_absY);
 
     cv::addWeighted(_absX, 0.5, _absY, 0.5, 0, _imgOut);
-    cv::namedWindow("Sobel", CV_NORMAL);
+    cv::namedWindow("Sobel", FP_NORMAL);
     cv::imshow("Sobel", _imgOut);
     cv::waitKey(0);
 
@@ -109,7 +109,7 @@ int main (int argc, char** argv){
 
     cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::namedWindow("Example", CV_NORMAL);
+    cv::namedWindow("Example", FP_NORMAL);
     cv::imshow("Example",_imgOut);
     cv::waitKey(0);
 

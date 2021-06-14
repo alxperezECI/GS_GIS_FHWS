@@ -11,7 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/gpu/gpu.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -75,12 +75,12 @@ int main (int argc, char** argv){
     //  As in other CUDA program, you should to ensure the data are uploaded
     //  to the GPU unit in order to be processed.
 
-    cv::gpu::GpuMat _gTempMatIn, _gTempMatOut;
+    cv::cuda::GpuMat _gTempMatIn, _gTempMatOut;
     _gTempMatIn.upload(_imgIn);
 
     double angle = std::stod( _parameter );
     cv::Mat M = cv::getRotationMatrix2D(cv::Point(_imgIn.cols/2,_imgIn.rows/2), angle, 1 );
-    cv::gpu::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size(_imgIn.cols,_imgIn.rows) );
+    cv::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size(_imgIn.cols,_imgIn.rows) );
 
 
 
@@ -98,7 +98,7 @@ int main (int argc, char** argv){
 
     cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::namedWindow("Example", CV_NORMAL);
+    cv::namedWindow("Example",FP_NORMAL );
     cv::imshow("Example",_imgOut);
     cv::waitKey(0);
 
