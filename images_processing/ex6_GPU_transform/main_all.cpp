@@ -10,12 +10,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-//#include <opencv2/stitching/stitcher.hpp>
-//#include <opencv2/features2d/features2d.hpp>
-//#include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/opencv.hpp>
-
+#include <opencv2/cudawarping.hpp>
 
 int main (int argc, char** argv){
     /*  This program can read all images inside a path passed as a first
@@ -106,7 +103,7 @@ int main (int argc, char** argv){
             double angle = std::stod( _parameter );
             cv::Mat M = cv::getRotationMatrix2D( cv::Point(_imgIn.cols/2,_imgIn.rows/2), angle, 1.0 );
 
-            cv::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size( _imgIn.cols,_imgIn.rows ) );
+            cv::cuda::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size( _imgIn.cols,_imgIn.rows ) );
 
 
             _gTempMatOut.download(_imgOut);             //  Once the GPU processing have finished, the data should be download

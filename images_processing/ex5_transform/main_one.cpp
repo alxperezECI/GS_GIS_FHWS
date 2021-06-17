@@ -81,7 +81,7 @@ int main (int argc, char** argv){
 
     cv::imwrite( _imgOutPath, _imgOut );          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::namedWindow( "Example", CV_NORMAL );
+    cv::namedWindow( "Example", FP_NORMAL );
     cv::imshow( "Example",_imgOut );
     cv::waitKey(0);
 
