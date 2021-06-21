@@ -6,13 +6,16 @@
 #include <sys/stat.h>
 #include <glob.h>
 #include <string.h>
+#include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/cuda.hpp>
-#include <opencv2/opencv.hpp>
+#include <opencv2/cudaarithm.hpp>
+
+
 
 
 int main (int argc, char** argv){
@@ -99,8 +102,8 @@ int main (int argc, char** argv){
 #endif
 
                 _Ndvi = cv::imread(_ImgName, cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);      // Reading the NIR image
-                _Nir.upload(_Ndvi);
-//                std::cout << "NIR size (" << _Ndvi.size() << ")" << std::endl;
+                _Nir.upload( _Ndvi);
+                std::cout << "NIR size (" << _Ndvi.size() << ")" << std::endl;
                 _Ndvi.release();
 
                 std::size_t foundPath = _ImgName.find_last_of("/\\");
@@ -116,23 +119,23 @@ int main (int argc, char** argv){
 
                 _Ndvi = cv::imread(_ImgName, cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);      // Reading the RED image
                 _Red.upload(_Ndvi);
-//                std::cout << "RED size (" << _Ndvi.size() << ")" << std::endl;
+                std::cout << "RED size (" << _Ndvi.size() << ")" << std::endl;
                 _Ndvi.release();
 
 
                 _namecode = _OutputPath + _namecode + "_NDVI.TIF";                      // create the name of ndvi ouput image
 
                 // Calculates the NDIV image from RED and NIR images.
-//                std::cout  << "adding\n";
+                std::cout  << "adding\n";
 
-                cv::add(_Nir,_Red, _Den);
+                cv::cuda::add(_Nir,_Red, _Den);
 
-//                std::cout << "Substracting\n";
+                std::cout << "Substracting\n";
                 // Computing the sum
-                cv::subtract(_Nir, _Red, _Num);                                    // Computing the substract
+                cv::cuda::subtract(_Nir, _Red, _Num);                                    // Computing the substract
                 _Num.convertTo(_Num,CV_32FC1);
                 _Den.convertTo(_Den,CV_32FC1);
-                cv::divide(_Num, _Den, _NdviGpu,CV_32FC1);                         // Obtaining the NDVI image
+                cv::cuda::divide(_Num, _Den, _NdviGpu,CV_32FC1);                         // Obtaining the NDVI image
                 _NdviGpu.convertTo(_NdviGpu,CV_16UC1, 65536/3.f);                   // Convert NDVI image to integers. This method may be improved with equalization.
                 _NdviGpu.download(_Ndvi);
 #ifdef  DEBUG
@@ -145,8 +148,8 @@ int main (int argc, char** argv){
                 _Den.release();
                 _NdviGpu.release();
 #ifdef  DEBUG
-                std::cout << "NDVI = " << _Ndvi << std::endl;
-                cv::namedWindow("Test", CV_NORMAL);
+//                std::cout << "NDVI = " << _Ndvi << std::endl;
+                cv::namedWindow("Test", FP_NORMAL);
                 cv::imshow("Test",_Ndvi);
                 cv::waitKey(0);
 #endif
