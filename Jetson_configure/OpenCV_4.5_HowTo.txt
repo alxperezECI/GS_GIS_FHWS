@@ -1,0 +1,12 @@
+Due to the Jetson OpenCV package installed using SDK-Manger does not supports
+CUDA, you need to remove installed version andm then download and compile the 
+source code from the web. This process is fully automated using the followin 
+script.
+
+You can copy the text or download this file from de web:
+
+https://github.com/AastaNV/JEP/blob/master/script/install_opencv4.5.0_Jetson.sh
+
+Then, you need to ensure the file has running permissions and the execute it.
+
+All the process need at least three hours.
