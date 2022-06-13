@@ -72,7 +72,7 @@ int main (int argc, char** argv){
     //  Here you should put all the code to make the process.
 
     double angle = std::stod( _parameter );
-    cv::Mat M = cv::getRotationMatrix2D(cv::Point(_imgIn.cols/2,_imgIn.rows), angle, 1);
+    cv::Mat M = cv::getRotationMatrix2D(cv::Point(_imgIn.cols/2,_imgIn.rows/2), angle, 1);
     cv::warpAffine( _imgIn, _imgOut, M, cv::Size(_imgIn.cols,_imgIn.rows) );
 
     //  Here ends the process and show the results.

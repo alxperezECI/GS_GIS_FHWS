@@ -15,5 +15,9 @@ int main()
     }
     
     cout << "Hello World!" << endl;
+    cout << "Helo FHWS" << endl;
+    cout << b.angulo() << endl;
+    cout << c.angulo() << endl;
+    cout << b.norma() << endl;
     return 0;
 }

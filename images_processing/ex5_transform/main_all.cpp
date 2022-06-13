@@ -74,7 +74,6 @@ int main (int argc, char** argv){
     try{
 
         double angle = std::stod( _parameter );
-        cv::Mat M = cv::getRotationMatrix2D(cv::Point(_imgIn.cols/2,_imgIn.rows), angle, 1);
 
         for(std::vector<cv::String>::const_iterator it = files.begin(); it != files.end(); ++it) {
             _imgInPath= *it;
@@ -90,8 +89,9 @@ int main (int argc, char** argv){
      //  Here you should put all the code to make the process.
 
             _imgIn = cv::imread(_imgInPath);
+            cv::Mat M = cv::getRotationMatrix2D(cv::Point(_imgIn.cols/2,_imgIn.rows/2), angle, 1);
             cv::warpAffine( _imgIn, _imgOut, M, cv::Size(_imgIn.cols,_imgIn.rows) );
-            cv::imwrite(_imgOutPath, _imgOut);                              // Writing the image to disk
+            cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
 
      //  Here end the process and show the results.
 

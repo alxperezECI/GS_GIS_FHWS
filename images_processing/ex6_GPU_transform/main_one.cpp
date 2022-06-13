@@ -80,9 +80,9 @@ int main (int argc, char** argv){
 
     double angle = std::stod( _parameter );
     cv::Mat M = cv::getRotationMatrix2D(cv::Point(_imgIn.cols/2,_imgIn.rows/2), angle, 1 );
-    cv::cuda::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size(_imgIn.cols,_imgIn.rows) );
 
-
+    for(int i =0; i< 1000; i++)
+        cv::cuda::warpAffine( _gTempMatIn, _gTempMatOut, M, cv::Size(_imgIn.cols,_imgIn.rows) );
 
     _gTempMatOut.download(_imgOut);             //  Once the GPU processing have finished, the data should be download
                                                 //  to the CPU unit to write they to the disk.
