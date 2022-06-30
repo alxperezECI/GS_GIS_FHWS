@@ -97,22 +97,24 @@ int main (int argc, char** argv){
 
 
     // To reduce the number of borders, first blur the image.
-    cv::blur( _imgResized, _imgResized, cv::Size(_parameters[0], \
+    //cv::blur( _imgResized, _imgResized, cv::Size(_parameters[0], \
               _parameters[0] ) );
-    cv::namedWindow( "Blur", 1 );
-    cv::imshow( "Blur", _imgResized );
-    //cv::waitKey(0);
-
-    /*
     // To make bluring on GPU
     cv::cuda::GpuMat _imgInGPU, _imgOutGPU;
-    _imgInGPU.upload( _imgIn );
+    _imgInGPU.upload( _imgResized );
     cv::Ptr<cv::cuda::Filter>blurfilter = cv::cuda::createBoxFilter(_imgInGPU.type(), _imgOutGPU.type(), cv::Size(_parameters[0], \
                                                       _parameters[0] ) );
 
     blurfilter->apply(_imgInGPU, _imgOutGPU);
-    _imgOutGPU.download( _imgOut );
-*/
+    _imgOutGPU.download( _imgResized );
+
+    cv::namedWindow( "Blur", 1 );
+    cv::imshow( "Blur", _imgResized );
+    //cv::waitKey(0);
+
+
+
+
 
     //  Borders detection x derivative filter
     cv::Mat _diffX, _diffY, _absX, _absY;
