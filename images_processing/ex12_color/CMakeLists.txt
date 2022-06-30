@@ -5,6 +5,3 @@ set (CMAKE_CXX_STANDARD 11)
 add_executable( cpuColor main_one.cpp )
 target_link_libraries( cpuColor ${OpenCV_LIBS} )
 
-add_executable( gpuColor_all main_all.cpp )
-target_link_libraries( gpuColor_all ${OpenCV_LIBS} )
-

@@ -99,7 +99,7 @@ int main (int argc, char** argv){
 
     // Looking for a contours
     cv::Mat _intermediate;
-    Canny( _imgIn, _intermediate, 50, 150, 3);
+    Canny( _imgIn, _intermediate, 150, 450, 3);
     _intermediate.convertTo(_imgOut, CV_8U);
 
 

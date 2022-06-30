@@ -24,18 +24,19 @@ int main (int argc, char** argv){
      *  process.
      */
 
-    std::string _workingPath, _parameter;
-    std::string _imgInPath, _imgOutPath, _imgName;
+    std::vector<double> _parameters;
+    std::string _workingPath, _imgInPath, _imgOutPath, _imgName;
 
-    try{                                       //  This block deals with possible errors and prevents the error screen.
-        if(argc == 3){
-            _workingPath = argv[0];            //  Linux always sends the programm path as a first parameter.
-            _imgInPath = argv[1];              //  This is the first parameter the user sends to app.
+    try{                                    //  This block deals with possible errors and prevents the error screen.
+        if(argc >= 3){
+            _workingPath = argv[0];         //  OS always sends the programm path as a first parameter.
+            _imgInPath = argv[1];           //  This is the first parameter the user sends to app.
 
-            _parameter = argv[2];               //  This is the second one.
+            for(int i = 2; i < argc; i++)
+                _parameters.push_back( std::stod( argv[i] ) );  //  These are the rest of the parameters as a numbers.
 
             std::size_t foundPath = _workingPath.find_last_of("/\\");
-            _workingPath = _workingPath.substr(0,foundPath);       // Find the name
+            _workingPath = _workingPath.substr(0,foundPath); // Find the name
 
              foundPath = _imgInPath.find_last_of("/\\");
             _imgName = _imgInPath.substr(foundPath);       // Find the name
@@ -47,20 +48,26 @@ int main (int argc, char** argv){
             throw(2);  // If the user forgot any parameter we need to tell him.
     }catch(...){       //  Herer the errors are catched.
         std::cout << "The parameters quantity are wrong. Please be sure the using:" << std::endl;
-        std::cout << "Example1 [imagePath] secParameter" << std::endl;
-        std::cout << "This program process one image pointed by the path." << std::endl;
+        std::cout << "portfolio [imagePath] list of parameters" << std::endl;
+        std::cout << "This program process the image pointed by its path." << std::endl;
         return(1);
     }
 
+    // At this point, start the time measuremet
 
-    cv::Mat _imgIn, _imgOut;
+    unsigned long t_AAtime=0, t_BBtime=0;
+    float t_pt;
+    float t_fpt;
+    t_AAtime =  cv::getTickCount();
+
+    cv::Mat _imgIn, _imgResized, _imgOut;
 
 
     std::cout << _imgIn << std::endl;
     std::cout << "Processing " << _imgInPath << std::endl;
 
 
-    _imgIn = cv::imread(_imgInPath);
+    _imgIn = cv::imread( _imgInPath );
 
     //  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     //  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -74,7 +81,25 @@ int main (int argc, char** argv){
     if( _imgIn.type() != CV_8U )            //  This program only works with
         _imgIn.convertTo( _imgIn, CV_8U );  //  0-255 images
 
-    cv::namedWindow( "Gray", 1 );    cv::imshow( "Gray", _imgIn );
+    cv::namedWindow( "Gray", 1 );
+    cv::imshow( "Gray", _imgIn );
+    cv::waitKey(0);
+
+    // If the image is bigger, then resize it.
+    if(_imgIn.size().width > 800 ){
+        cv::resize(_imgIn, _imgResized, cv::Size(800,600) );
+        cv::namedWindow( "Resized", 1 );
+        cv::imshow( "Resized", _imgResized );
+        cv::waitKey(0);
+    }else
+        _imgResized = _imgIn;
+
+
+    // To reduce the number of borders, first blur the image.
+    cv::blur(_imgResized, _imgResized, cv::Size(_parameters[0], _parameters[0] ) );
+    cv::namedWindow( "Blur", 1 );
+    cv::imshow( "Blur", _imgResized );
+    cv::waitKey(0);
 
     //  Borders detection x derivative filter
     cv::Mat _diffX, _diffY, _absX, _absY;
@@ -83,9 +108,9 @@ int main (int argc, char** argv){
                           -1, 0, 1,
                           -1, 0, 1);
     kernel = kernel;
-    cv::filter2D( _imgIn,_diffX,_imgIn.depth(), kernel );
+    cv::filter2D( _imgResized, _diffX, _imgIn.depth(), kernel );
     cv::namedWindow("X derivative", FP_NORMAL);
-    cv::imshow("X derivative",_diffX);
+    cv::imshow("X derivative", _diffX);
     cv::waitKey(0);
 
     //  Borders detection y derivative filter
@@ -93,7 +118,7 @@ int main (int argc, char** argv){
                           0, 0, 0,
                           -1, -1, -1);
     kernel = kernel;
-    cv::filter2D( _imgIn,_diffY,_imgIn.depth(), kernel );
+    cv::filter2D( _imgResized, _diffY, _imgIn.depth(), kernel );
     cv::namedWindow("Y derivative", FP_NORMAL);
     cv::imshow("Y derivative",_diffY);
     cv::waitKey(0);
@@ -101,26 +126,34 @@ int main (int argc, char** argv){
     cv::convertScaleAbs(_diffX,_absX);
     cv::convertScaleAbs(_diffY,_absY);
 
-    cv::addWeighted(_absX, std::stod(_parameter.c_str()),\
-                    _absY, std::stod(_parameter.c_str()), 0, _imgOut);
+    cv::addWeighted(_absX, _parameters[1],\
+                    _absY, _parameters[2], 0, _imgOut);
     cv::namedWindow("Borders", FP_NORMAL);
     cv::imshow("Borders", _imgOut);
     cv::waitKey(0);
 
     // Using Sobel filter
 
-    cv::Sobel( _imgIn, _diffX, _imgIn.depth(), 1, 0, 3, 2, 0, \
+    cv::Sobel( _imgResized, _diffX, _imgIn.depth(), 1, 0, 3, 2, 0, \
                cv::BORDER_DEFAULT );
-    cv::Sobel( _imgIn, _diffY, _imgIn.depth(), 0, 1, 3, 2, 0, \
+    cv::Sobel( _imgResized, _diffY, _imgIn.depth(), 0, 1, 3, 2, 0, \
                cv::BORDER_DEFAULT );
 
     cv::convertScaleAbs(_diffX,_absX);
     cv::convertScaleAbs(_diffY,_absY);
 
-    cv::addWeighted(_absX, std::stod(_parameter.c_str()), \
-                    _absY, std::stod(_parameter.c_str()), 0, _imgOut);
+    cv::addWeighted(_absX, _parameters[3], \
+                    _absY, _parameters[4], 0, _imgOut);
     cv::namedWindow("Sobel", FP_NORMAL);
     cv::imshow("Sobel", _imgOut);
+    cv::waitKey(0);
+
+    // Looking for a contours
+    cv::Mat _intermediate;
+    Canny( _imgResized, _intermediate, _parameters[5], _parameters[6], 3);
+    _intermediate.convertTo(_imgOut, CV_8U);
+    cv::namedWindow("Canny", FP_NORMAL);
+    cv::imshow("Canny", _imgOut);
     cv::waitKey(0);
 
     //  Here end the process and show the results.
@@ -129,9 +162,10 @@ int main (int argc, char** argv){
 
     cv::imwrite(_imgOutPath, _imgOut);          // Writing the image to disk
     std::cout << "The image was create in: " << _imgOutPath << std::endl;
-    cv::waitKey(0);
 
-
-
+    // time measure end
+    t_BBtime = cv::getTickCount();
+    t_pt = (t_BBtime-t_AAtime) /  cv::getTickFrequency();
+    printf("time: %.4lf sec\n", t_pt);
     return 0;
 }

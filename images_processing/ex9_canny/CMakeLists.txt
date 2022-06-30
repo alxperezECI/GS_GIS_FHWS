@@ -4,7 +4,3 @@ find_package( OpenCV REQUIRED )
 set (CMAKE_CXX_STANDARD 11)
 add_executable( cpuCanny main_one.cpp )
 target_link_libraries( cpuCanny ${OpenCV_LIBS} )
-
-add_executable( cpuCanny_all main_all.cpp )
-target_link_libraries( cpuCanny_all ${OpenCV_LIBS} )
-

@@ -4,7 +4,3 @@ find_package( OpenCV REQUIRED )
 set (CMAKE_CXX_STANDARD 11)
 add_executable( cpuContours main_one.cpp )
 target_link_libraries( cpuContours ${OpenCV_LIBS} )
-
-add_executable( cpuContours_all main_all.cpp )
-target_link_libraries( cpuContours_all ${OpenCV_LIBS} )
-
