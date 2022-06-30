@@ -12,6 +12,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/cuda.hpp>
+#include <opencv2/cudafilters.hpp>
 #include <opencv2/opencv.hpp>
 
 
@@ -83,23 +84,35 @@ int main (int argc, char** argv){
 
     cv::namedWindow( "Gray", 1 );
     cv::imshow( "Gray", _imgIn );
-    cv::waitKey(0);
+    //cv::waitKey(0);
 
     // If the image is bigger, then resize it.
     if(_imgIn.size().width > 800 ){
         cv::resize(_imgIn, _imgResized, cv::Size(800,600) );
         cv::namedWindow( "Resized", 1 );
         cv::imshow( "Resized", _imgResized );
-        cv::waitKey(0);
+        //cv::waitKey(0);
     }else
         _imgResized = _imgIn;
 
 
     // To reduce the number of borders, first blur the image.
-    cv::blur( _imgResized, _imgResized, cv::Size(_parameters[0], _parameters[0] ) );
+    cv::blur( _imgResized, _imgResized, cv::Size(_parameters[0], \
+              _parameters[0] ) );
     cv::namedWindow( "Blur", 1 );
     cv::imshow( "Blur", _imgResized );
-    cv::waitKey(0);
+    //cv::waitKey(0);
+
+    /*
+    // To make bluring on GPU
+    cv::cuda::GpuMat _imgInGPU, _imgOutGPU;
+    _imgInGPU.upload( _imgIn );
+    cv::Ptr<cv::cuda::Filter>blurfilter = cv::cuda::createBoxFilter(_imgInGPU.type(), _imgOutGPU.type(), cv::Size(_parameters[0], \
+                                                      _parameters[0] ) );
+
+    blurfilter->apply(_imgInGPU, _imgOutGPU);
+    _imgOutGPU.download( _imgOut );
+*/
 
     //  Borders detection x derivative filter
     cv::Mat _diffX, _diffY, _absX, _absY;
@@ -150,11 +163,18 @@ int main (int argc, char** argv){
 
     // Looking for a contours
     cv::Mat _intermediate;
-    Canny( _imgResized, _intermediate, _parameters[5], _parameters[6], 3);
+    cv::Canny( _imgResized, _intermediate, _parameters[5], _parameters[6], 3);
     _intermediate.convertTo(_imgOut, CV_8U);
     cv::namedWindow("Canny", FP_NORMAL);
     cv::imshow("Canny", _imgOut);
-    cv::waitKey(0);
+    //cv::waitKey(0);
+
+    // To reduce the number of borders, first blur the image.
+    cv::blur( _imgOut, _imgOut, cv::Size(10, 10) );
+    cv::threshold(_imgOut, _imgOut,50, 255, cv::THRESH_BINARY );
+    cv::namedWindow( "Blur", 1 );
+    cv::imshow( "Blur", _imgOut );
+    //cv::waitKey(0);
 
     //  Here end the process and show the results.
     //  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
