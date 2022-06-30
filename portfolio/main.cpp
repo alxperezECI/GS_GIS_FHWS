@@ -96,7 +96,7 @@ int main (int argc, char** argv){
 
 
     // To reduce the number of borders, first blur the image.
-    cv::blur(_imgResized, _imgResized, cv::Size(_parameters[0], _parameters[0] ) );
+    cv::GaussianBlur( sblur(_imgResized, _imgResized, cv::Size(_parameters[0], _parameters[0] ) );
     cv::namedWindow( "Blur", 1 );
     cv::imshow( "Blur", _imgResized );
     cv::waitKey(0);
